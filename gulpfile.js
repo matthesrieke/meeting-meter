@@ -34,7 +34,6 @@ gulp.task('serve', ['build', 'watch'], function () {
 
     //use gulp.watch to trigger server actions(notify, start or stop) 
     gulp.watch(['dist/**/*.js', 'dist/**/*.json'], function (file) {
-        console.log('File changed: ' + file);
         server.stop();
         server.start();
     });
