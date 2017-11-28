@@ -1,5 +1,6 @@
 import { Badge } from './model/badge';
 import { Meeting } from '../src/meeting';
+import { BadgeMapper } from './badge-mapper';
 
 let dummyWork = function() {
     let tmp = 12;
@@ -12,7 +13,7 @@ let dummyWork = function() {
 describe("meeting", () => {
     it("unmapped Badges should be as expected", () => {
 
-        var meeting = new Meeting();
+        var meeting = new Meeting(new BadgeMapper());
         expect(meeting.getUnmappedBadges().length).toBe(0);
 
         // mapped
@@ -34,7 +35,7 @@ describe("meeting", () => {
 
     it("should follow the meeting workflow", () => {
 
-        var meeting = new Meeting();
+        var meeting = new Meeting(new BadgeMapper());
 
         // mapped, but before meeting
         meeting.onBadgeScanned({

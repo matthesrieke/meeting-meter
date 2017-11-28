@@ -1,12 +1,14 @@
+import { BadgeMapper } from './badge-mapper';
 import { Badge } from './model/badge';
 
-import * as sallary from './sallary.json';
-import * as badgeMapping from './badge-mapping.json';
 
 export class Meeting {
 
     private scannedBadges = {};
     private startDate: Date;
+
+    constructor(private mapper: BadgeMapper) {
+    }
     
     public getUnmappedBadges(): Badge[] {
         return Object.keys(this.scannedBadges)
@@ -38,16 +40,11 @@ export class Meeting {
     }
     
     public onBadgeScanned(b: Badge): void {
+        const badgeMapping = this.mapper.getBadgeMapping();
         if (badgeMapping[b.id]) {
             const category = badgeMapping[b.id];
 
-            if (!sallary[category]) {
-                console.warn('Unsupported category: ' + category);
-            } else {
-                b.hourlyRate = sallary[category];
-                b.category = category;
-            }
-
+            this.mapper.mapBadge(b, category);
         }
     
         this.scannedBadges[b.id] = b;
