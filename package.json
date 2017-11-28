@@ -24,6 +24,7 @@
     "@types/mocha": "^2.2.44",
     "@types/node": "^8.0.53",
     "gulp": "^3.9.1",
+    "gulp-live-server": "0.0.31",
     "gulp-typescript": "^3.2.3",
     "typescript": "^2.6.2"
   }
