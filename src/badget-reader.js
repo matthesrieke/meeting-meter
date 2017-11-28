@@ -29,10 +29,15 @@ var startReading = function(devIdPath, dataCallback) {
 
 }
 
+/**
+ * searches for the RFID devices and starts listening to input events
+ * 
+ * @param {*} callback cb function that is called with a device id string for each badget read
+ */
 var readBadgets = function(callback) {
     fs.readdir(BY_ID_PATH, (err, files) => {
         if (err) {
-            console.warn(err);
+            console.error('ERROR: ' + err);
             process.exit(1);
         }
     
@@ -48,7 +53,7 @@ var readBadgets = function(callback) {
         if (targetDevice) {
             fs.realpath(BY_ID_PATH + targetDevice, (err, resolved) => {
                 if (err) {
-                    console.warn(err);
+                    console.error('ERROR: ' + err);
                     process.exit(1);
                 }
     
@@ -57,7 +62,8 @@ var readBadgets = function(callback) {
             
         }
         else {
-            console.warn('Could not find device!');
+            console.error('ERROR: Could not find device!');
+            process.exit(1);
         }
     });
 }
