@@ -1,4 +1,4 @@
-import * as  badgets from './badget-reader';
+import * as  Badges from './Badge-reader';
 
 import * as express from 'express';
 import * as http from 'http';
@@ -26,7 +26,7 @@ wss.on('connection', (ws: WebSocket) => {
 
 });
 
-badgets.readBadgets((deviceId) => {
+Badges.readBadges((deviceId) => {
     const obj = {
         time: new Date().toISOString(),
         device: deviceId,

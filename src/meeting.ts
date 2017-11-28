@@ -1,50 +1,57 @@
-import { Badget } from './model/badget';
+import { Badge } from './model/badge';
 
 import * as sallary from './sallary.json';
-import * as badgetMapping from './badget-mapping.json';
+import * as badgeMapping from './badge-mapping.json';
 
 export class Meeting {
 
-    private scannedBadgets = {};
+    private scannedBadges = {};
     private startDate: Date;
     
-    public getUnmappedBadgets(): Badget[] {
-        return Object.keys(this.scannedBadgets)
-            .map(k => this.scannedBadgets[k])
-            .filter((b: Badget) => !b.category && !b.hourlyRate);
+    public getUnmappedBadges(): Badge[] {
+        return Object.keys(this.scannedBadges)
+            .map(k => this.scannedBadges[k])
+            .filter((b: Badge) => !b.category && !b.hourlyRate);
     };
     
-    public getMeetingBadgets(): Badget[] {
-        return Object.keys(this.scannedBadgets)
-            .map(k => this.scannedBadgets[k])
-            .filter((b: Badget) => !b.category && !b.hourlyRate);
+    public getMeetingBadges(): Badge[] {
+        if (!this.startDate) {
+            return [];
+        }
+
+        return Object.keys(this.scannedBadges)
+            .map(k => this.scannedBadges[k])
+            .filter((b: Badge) => b.category && b.hourlyRate && b.lastScan > this.startDate);
     }
     
     public startMeeting(): void {
         this.startDate = new Date();
+        console.log('Meeting started: ' + this.startDate);
     };
     
     public endMeeting(): void {
-    
+        delete this.startDate;
     };
+
+    public getStartDate(): Date {
+        return this.startDate;
+    }
     
-    public onBadgetScanned(b: Badget): void {
-        if (badgetMapping[b.id]) {
-            b.hourlyRate = badgetMapping[b.id];
+    public onBadgeScanned(b: Badge): void {
+        if (badgeMapping[b.id]) {
+            const category = badgeMapping[b.id];
+
+            if (!sallary[category]) {
+                console.warn('Unsupported category: ' + category);
+            } else {
+                b.hourlyRate = sallary[category];
+                b.category = category;
+            }
+
         }
     
-        this.scannedBadgets[b.id] = b;
+        this.scannedBadges[b.id] = b;
+        console.log('Scanned badge: ' + JSON.stringify(b));
     };
     
-    public mapBadget(b: Badget, category: string): void {
-        if (!sallary[category]) {
-            console.warn('Unsupported category: ' + category);
-        }
-        else {
-            const sal = sallary[category];
-            b.category = category;
-            b.hourlyRate = sal;
-            this.scannedBadgets[b.id] = b;
-        }
-    };
 }

@@ -1,4 +1,4 @@
-export class Badget {
+export class Badge {
 
     public id: string;
     public lastScan: Date;
