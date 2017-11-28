@@ -49,6 +49,6 @@ badgets.readBadgets((deviceId) => {
    
 })
 
-server.listen(process.env.PORT || 8999, () => {
-    console.log('Server started on port ${server.address().port} :)');
+server.listen(process.env.NODE_PORT || 8999, () => {
+    console.log('Server started on port: ' + (process.env.NODE_PORT || 8999));
 });
