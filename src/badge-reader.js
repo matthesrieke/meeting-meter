@@ -16,7 +16,12 @@ var startReading = function (devIdPath, dataCallback) {
                 const deviceId = buffer.join('');
                 console.log('Device regsitered: ' + deviceId);
                 if (dataCallback) {
-                    dataCallback(deviceId);
+                    try {
+                        dataCallback(deviceId);
+                    }
+                    catch (err) {
+                        console.warn(err);
+                    }
                 }
                 buffer = [];
             }

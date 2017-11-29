@@ -1,24 +1,35 @@
+import * as moment from 'moment';
+import { Moment } from 'moment'
+
 import { Badge } from './model/badge';
 import { Meeting } from '../src/meeting';
 import { BadgeMapper } from './badge-mapper';
 
-let dummyWork = function() {
+let dummyWork = function (seconds = 0) {
+    if (seconds) {
+        console.log(moment() + ' Doing dummy work for seconds: ' + seconds);
+    }
+
     let tmp = 12;
-    let now = new Date();
-    while (!(now < new Date())) {
+    let targetTime =  moment().add(seconds, 'seconds');
+    while (targetTime.valueOf() >= moment().valueOf()) {
         tmp = tmp * tmp;
+    }
+
+    if (seconds) {
+        console.log(moment() + ' Done dummy work.');
     }
 }
 
 describe("meeting", () => {
     it("unmapped Badges should be as expected", () => {
 
-        var meeting = new Meeting(new BadgeMapper());
+        var meeting = new Meeting(new BadgeMapper('../test/badge-mapping.json', false));
         expect(meeting.getUnmappedBadges().length).toBe(0);
 
         // mapped
         meeting.onBadgeScanned({
-            id: '1231232136',
+            id: 'a',
             lastScan: new Date()
         } as Badge);
 
@@ -30,21 +41,32 @@ describe("meeting", () => {
             lastScan: new Date()
         } as Badge);
 
+        // meeting not started!
+        expect(meeting.getUnmappedBadges().length).toBe(0);
+
+        meeting.startMeeting();
+        // unmapped Badge
+        meeting.onBadgeScanned({
+            id: 'asdf',
+            lastScan: new Date()
+        } as Badge);
+
+        // meeting not started!
         expect(meeting.getUnmappedBadges().length).toBe(1);
     });
 
     it("should follow the meeting workflow", () => {
 
-        var meeting = new Meeting(new BadgeMapper());
+        var meeting = new Meeting(new BadgeMapper('../test/badge-mapping.json', false));
 
         // mapped, but before meeting
         meeting.onBadgeScanned({
-            id: '1231232136',
+            id: 'a',
             lastScan: new Date()
         } as Badge);
 
         expect(meeting.getMeetingBadges().length).toBe(0);
-        
+
         dummyWork();
         meeting.startMeeting();
         dummyWork();
@@ -53,7 +75,7 @@ describe("meeting", () => {
 
         // mapped
         meeting.onBadgeScanned({
-            id: '1231232136',
+            id: 'b',
             lastScan: new Date()
         } as Badge);
 
@@ -69,7 +91,7 @@ describe("meeting", () => {
 
         // mapped
         meeting.onBadgeScanned({
-            id: '3234542237',
+            id: 'c',
             lastScan: new Date()
         } as Badge);
 
@@ -77,6 +99,7 @@ describe("meeting", () => {
 
         meeting.endMeeting();
 
-        expect(meeting.getMeetingBadges().length).toBe(0);
+        expect(meeting.getMeetingBadges().length).toBe(2);
     });
+
 });
