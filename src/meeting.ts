@@ -1,7 +1,6 @@
 import * as moment from 'moment';
 import { Moment } from 'moment'
 
-import { BadgeMapper } from './badge-mapper';
 import { Badge } from './model/badge';
 import { NaiveCostCalculator } from './naive-cost-calculator';
 
@@ -13,23 +12,12 @@ export class Meeting {
     private startDate: Moment;
     private endDate: Moment;
 
-    constructor(private mapper: BadgeMapper) {
+    constructor() {
     }
-    
-    public getUnmappedBadges(): Badge[] {
-        return Object.keys(this.scannedBadges)
-            .map(k => this.scannedBadges[k])
-            .filter((b: Badge) => !b.category && !b.hourlyRate);
-    };
-    
+      
     public getMeetingBadges(): Badge[] {
-        if (!this.startDate) {
-            return [];
-        }
-
         return Object.keys(this.scannedBadges)
-            .map(k => this.scannedBadges[k])
-            .filter((b: Badge) => b.category && b.hourlyRate && b.lastScan.valueOf() > this.startDate.valueOf());
+            .map(k => this.scannedBadges[k]);
     }
     
     public startMeeting(): void {
@@ -50,19 +38,14 @@ export class Meeting {
         return this.endDate;
     }
     
-    public onBadgeScanned(b: Badge): void {
+    public addBadge(b: Badge): void {
         if (!this.startDate || this.endDate) {
+            console.log('No meeting ongoing, cannot add badge');
             return;
-        }
-
-        const badgeMapping = this.mapper.getBadgeMapping();
-        if (badgeMapping[b.id]) {
-            const category = badgeMapping[b.id];
-
-            this.mapper.mapBadge(b, category);
         }
     
         this.scannedBadges[b.id] = b;
+        console.log('Added badge to meeting: ' + b.id);
     };
 
     public calculateTotalCosts(): number {

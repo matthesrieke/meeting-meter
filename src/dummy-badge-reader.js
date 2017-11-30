@@ -1,4 +1,4 @@
-const badgeIds = ['3234342237', '1231232136', '3234542237'];
+const badgeIds = ['0355757047', '0000517857', '0000803221'];
 
 /**
  * searches for the RFID devices and starts listening to input events
@@ -12,12 +12,11 @@ var readBadges = function (callback) {
         setTimeout(() => {
             const val = i <= 2 ? badgeIds[i] : 'bla';
             i++;
-            if (i > 10) {
-                i = 0;
+            if (i <= 10) {
+                next();
             }
             callback(val);
-            next();
-        }, 10000);
+        }, 5000);
     };
 
     next();

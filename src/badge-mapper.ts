@@ -19,6 +19,11 @@ export class BadgeMapper {
         this.badgeMapping = JSON.parse(content);
     };
 
+    /**
+     * 
+     * @param b the badge
+     * @param category the category to map
+     */
     public mapBadge(b: Badge, category: string): void {
         if (!sallary[category]) {
             console.warn('Unsupported category: ' + category);
@@ -30,6 +35,26 @@ export class BadgeMapper {
             this.badgeMapping[b.id] = category;
         }
     };
+
+    public getCategories(): string[] {
+        return Object.keys(sallary);
+    }
+
+    /**
+     * returns true if the badge could be enriched (= found in mappings)
+     * @param b the badge
+     */
+    public enrichBadge(b: Badge): boolean {
+        if (this.badgeMapping[b.id]) {
+            const cat = this.badgeMapping[b.id];
+            const sal = sallary[cat];
+            b.hourlyRate = sal;
+            b.category = cat;
+            return true;
+        }
+
+        return false;
+    }
 
     public getBadgeMapping(): any {
         return this.badgeMapping;

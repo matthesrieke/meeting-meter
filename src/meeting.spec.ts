@@ -22,48 +22,23 @@ let dummyWork = function (seconds = 0) {
 }
 
 describe("meeting", () => {
-    it("unmapped Badges should be as expected", () => {
-
-        var meeting = new Meeting(new BadgeMapper('../test/badge-mapping.json', false));
-        expect(meeting.getUnmappedBadges().length).toBe(0);
-
-        // mapped
-        meeting.onBadgeScanned({
-            id: 'a',
-            lastScan: new Date()
-        } as Badge);
-
-        expect(meeting.getUnmappedBadges().length).toBe(0);
-
-        // unmapped Badge
-        meeting.onBadgeScanned({
-            id: 'asdf',
-            lastScan: new Date()
-        } as Badge);
-
-        // meeting not started!
-        expect(meeting.getUnmappedBadges().length).toBe(0);
-
-        meeting.startMeeting();
-        // unmapped Badge
-        meeting.onBadgeScanned({
-            id: 'asdf',
-            lastScan: new Date()
-        } as Badge);
-
-        // meeting not started!
-        expect(meeting.getUnmappedBadges().length).toBe(1);
-    });
 
     it("should follow the meeting workflow", () => {
+        var mapper = new BadgeMapper('../test/badge-mapping.json', false);
+        var meeting = new Meeting();
 
-        var meeting = new Meeting(new BadgeMapper('../test/badge-mapping.json', false));
+        var processBadge = (b: Badge): void => {
+            if (mapper.enrichBadge(b)) {
+                meeting.addBadge(b);
+            }
+        };
 
         // mapped, but before meeting
-        meeting.onBadgeScanned({
+        processBadge({
             id: 'a',
             lastScan: new Date()
         } as Badge);
+        
 
         expect(meeting.getMeetingBadges().length).toBe(0);
 
@@ -74,7 +49,7 @@ describe("meeting", () => {
         expect(meeting.getMeetingBadges().length).toBe(0);
 
         // mapped
-        meeting.onBadgeScanned({
+        processBadge({
             id: 'b',
             lastScan: new Date()
         } as Badge);
@@ -82,7 +57,7 @@ describe("meeting", () => {
         expect(meeting.getMeetingBadges().length).toBe(1);
 
         // unmapped Badge
-        meeting.onBadgeScanned({
+        processBadge({
             id: 'asdf',
             lastScan: new Date()
         } as Badge);
@@ -90,7 +65,7 @@ describe("meeting", () => {
         expect(meeting.getMeetingBadges().length).toBe(1);
 
         // mapped
-        meeting.onBadgeScanned({
+        processBadge({
             id: 'c',
             lastScan: new Date()
         } as Badge);
