@@ -1,3 +1,4 @@
+import { setInterval } from 'timers';
 import { BadgeMapper } from './badge-mapper';
 import * as badgeReader from './badge-reader';
 
@@ -88,6 +89,12 @@ const handleBadgeRead = (deviceId: string): void  => {
  */
 badgeReader.readBadges(handleBadgeRead);
 // require('./dummy-badge-reader').readBadges(handleBadgeRead);
+
+setInterval(() => {
+    if (meeting) {
+        sendPayload(createMeetingView());
+    }
+}, 5000);
 
 const createBadgeView = (b: Badge): any => {
     const tmp: Badge = JSON.parse(JSON.stringify(b));
