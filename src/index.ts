@@ -39,7 +39,7 @@ wss.on('connection', (ws: WebSocket) => {
 
 });
 
-const sendPayload = (payload: any): void => {
+const sendPayload = (payload: string): void => {
     for (const wsId in connections) {
         if (connections.hasOwnProperty(wsId)) {
             const ws = connections[wsId];
@@ -92,7 +92,7 @@ badgeReader.readBadges(handleBadgeRead);
 
 setInterval(() => {
     if (meeting) {
-        sendPayload(createMeetingView());
+        sendPayload(JSON.stringify(createMeetingView()));
     }
 }, 5000);
 

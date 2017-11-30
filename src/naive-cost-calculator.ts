@@ -16,7 +16,6 @@ export class NaiveCostCalculator implements CostCalculator {
         }).reduce((a, b) => a + b);
 
         total = Math.round(total * 100) / 100;
-        console.log('Total costs: ' + total + '€');
 
         return total;
     }
